@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Blank HTML5</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter&display=swap"
+            rel="stylesheet"
+        />
+        <style type="text/css">
+            body {
+                font-family: "Inter", serif;
+                line-height: 1.7;
+                font-size: 17px;
+                padding: 25px;
+                width: 500px;
+                margin: auto;
+                height: 90vh;
+                overflow-y: hidden;
+            }
+            .playcontainer {
+                height: 500px;
+                overflow-y: scroll;
+                padding: 15px;
+            }
+            input[type=text]{
+                width: 100%;
+                border: 1px solid #80808029;
+                border-radius: 4px;
+                margin: 8px 0;
+                outline: none;
+                padding: 8px;
+                box-sizing: border-box;
+                transition: .3s;
+                height: 40px;
+                font-size: 16px;
+                font-family: Inter;
+                margin-bottom: 20px;
+              }
+              
+        </style>
+    </head>
+    <body>
+        <style>
+            
+            .tree, .tree ul {
+                margin: 0;
+                padding: 0;
+                list-style: none
+            }
+
+            .tree ul {
+                margin-left: 1em;
+                position: relative
+            }
+
+            .tree ul ul {
+                margin-left: .5em
+            }
+
+            .tree ul:before {
+                content: "";
+                display: block;
+                width: 0;
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                border-left: 1px solid
+            }
+
+            .tree li {
+                margin: 0;
+                padding: 0 1em;
+                line-height: 2em;
+                /* color:#369; */
+                font-weight: 400;
+                position: relative
+            }
+
+            .tree ul li:before {
+                content: "";
+                display: block;
+                width: 10px;
+                height: 0;
+                border-top: 1px solid;
+                margin-top: -1px;
+                position: absolute;
+                top: 1em;
+                left: 0
+            }
+
+            .tree ul li:last-child:before {
+                background: #fff;
+                height: auto;
+                top: 1em;
+                bottom: 0
+            }
+
+            .indicator {
+                margin-right: 5px;
+                cursor: pointer;
+                color: #06d79c;
+            }
+
+            .indicator:hover {
+                color: #000;
+            }
+
+            .tree li a {
+                text-decoration: none;
+                /* color:#369; */
+            }
+
+            /* .tree li button, .tree li button:active, .tree li button:focus {
+                text-decoration: none;
+                color:#333;
+                border:none;
+                background:transparent;
+                margin:0px 0px 0px 0px;
+                padding:0px 0px 0px 0px;
+                outline: 0;
+            } */
+
+            .treeHrefCss {
+                color: #06d79c;
+                margin-left: 2px;
+            }
+
+            .treeDateCss {
+                color: #06d79c;
+                margin-left: 2px;
+            }
+
+            .treeEmptyCss {
+                color: #9E9E9E;
+                margin-left: 2px;
+            }
+
+            .treeBoldCss {
+                color: #000;
+                margin-left: 2px;
+            }
+
+            .treeCss span.atrs:hover {
+                color: #06d79c;
+                cursor: pointer;
+            }
+
+            .treeCss a:hover {
+                color: #06d79c;
+                cursor: pointer;
+            }
+
+            .treeCss b:hover {
+                text-decoration: underline;
+                color: #06d79c;
+                cursor: pointer;
+            }
+            .JSONtree svg{
+                width: 18px;
+                height: 18px;
+                fill: currentColor;
+                color:  #06d79c;
+                cursor: pointer;
+            }
+            .treehead{
+                display: flex;
+                align-items: center;
+                gap: 7px;
+                width: max-content;
+            }
+            li i.treeEmptyCss{
+                word-break: break-all;
+                font-size: 90%;
+            }
+            .empty-tree{
+                border: 1px solid #80808026;
+                padding: 15px 20px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                background: #726e6e05;
+                text-align: center;
+                font-size: 16px;
+                border-radius: 7px;
+            }
+            .empty-tree svg{
+                width:  36px;
+                height:  36px;
+                fill: currentColor;
+                margin-bottom: 20px;
+                color:  #06d79c;
+            }
+        </style>
+        <input type="text" />
+        <div class="treecontainer"></div>
+        <script>
+            let json = {
+                name: "shitheesh",
+                info: {
+                    job: "php developer",
+                    company: "Picky Assist",
+                    login : 'PeSgVkYp3s6v9yPPeSgVkYp3s6v9y$B&E)H@McQfTjWmZq4eSgVkYp3s6v9y$B&E)H@McQfTjWmZq4$B&E)H@McQfTjWmZq4'
+                },
+                languages: [
+                    {
+                        name: "React JS",
+                        experience: 3,
+                    },
+                    {
+                        name: "Php",
+                        experience: 4,
+                    },
+                    {
+                        name: "Node JS",
+                        experience: 3,
+                    },
+                ],
+            };
+            let container = document.querySelector(".treecontainer");
+
+            document.querySelector("input").addEventListener('keyup', (e) => {
+                Jsontree.search(container,e.target.value);
+            })
+
+            var Jsontree = {};
+            // container,json,Name,Prefix for JSON
+            Jsontree.create = (c, j,n,p) => {
+                let h = (!Jsontree.empty(j)) ? `
+                        <ul class="JSONtree treeCss tree">
+                            <li class="branch">
+                                <div class="treehead parenthead">
+                                    ${Jsontree.expander('close')}
+                                    <a class="treeHrefCss" href="#">${n}</a>
+                                </div>
+                                <ul>${Jsontree.generate(j,p)}</ul>
+                            </li>
+                        </ul>` : 
+                        `<div class="empty-tree">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M256 512c141.4 0 256-114.6 256-256S397.4 0 256 0S0 114.6 0 256S114.6 512 256 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-144c-17.7 0-32-14.3-32-32s14.3-32 32-32s32 14.3 32 32s-14.3 32-32 32z"/></svg>
+                            <div class="info-tree">Looks like there is no array found in this loop block, please select a valid sample array in the loop settings.</div>
+                        </div>`;
+                // let tree = new DOMParser().parseFromString(h, "text/html");
+                // console.log(tree);
+                c.innerHTML = h;
+                if(!Jsontree.empty(j)){
+                    for (let attrs of c.querySelectorAll(".atrs")) {
+                        attrs.addEventListener("click", (e) => {
+                            console.log(e.target);
+                        });
+                    }
+                    for (let item of c.querySelectorAll(".treehead")) {
+                        item.addEventListener("click", (e) => {
+                            let br = e.target.closest('.branch');
+                            // Determine whether show or Hide
+                            let plus = br.querySelector('svg.open-icon');
+                            let type = (Jsontree.hidden(plus)) ? 'close' : 'open';
+                            let children = br.querySelector('ul').children;
+                            for (let child of children) {
+                                child.style.display = (type == 'open') ? 'block' : 'none';
+                            }
+                            // console.log(e);
+                            
+                            if(type == 'open'){
+                                // Closing the particular Branch
+                                br.querySelector('svg.open-icon').style.display = "none";
+                                br.querySelector('svg.close-icon').style.display = "block";
+                            }else{
+                                // Opening the branch
+                                br.querySelector('svg.open-icon').style.display = "block";
+                                br.querySelector('svg.close-icon').style.display = "none";
+
+                            }
+                        });
+                    }
+                    c.querySelector('.parenthead').click();
+                }
+                
+            };
+
+            Jsontree.empty = (value) => {
+                return (
+                    (value == null) ||
+                    (value.hasOwnProperty('length') && value.length === 0) ||
+                    (value.constructor === Object && Object.keys(value).length === 0)
+                );
+            }
+
+            Jsontree.search = (cont,key) => {
+                if (key) {
+                    key = key.toLowerCase();
+                    let li = cont.querySelectorAll('li');
+                    for (let list of li) {
+                        if(!list.classList.contains('branch')){
+                            let value = list.innerText.trim().toLowerCase();
+                            if (value.includes(key)) {
+                                Jsontree.display(list,'show');
+                            } else {
+                                Jsontree.display(list,'hide');
+                            }
+                        }else{
+                            Jsontree.display(list,'hide');
+                            let current_parent = list;
+                            let sublist = list.querySelectorAll('li');
+                            for (let innerlist of sublist) {
+                                if(innerlist.classList.contains('branch')){
+                                    let value = innerlist.innerText.trim().toLowerCase();
+                                    if (value.includes(key)) {
+                                        Jsontree.display(innerlist.querySelector('.open-icon'),'hide');
+                                        Jsontree.display(innerlist.querySelector('.close-icon'),'show');
+                                        Jsontree.display(current_parent,'show');
+                                    }
+                                }else{
+                                    let value = innerlist.innerText.trim().toLowerCase();
+                                    if (value.includes(key)) {
+                                        Jsontree.display(current_parent,'show');
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    let li = cont.querySelectorAll('li');
+                    for (let list of li) {
+                        Jsontree.display(list,'show');
+                        let head = list.querySelectorAll('.treehead');
+                        for (let h of head) {
+                            Jsontree.display(h.querySelector('.open-icon'),'hide');
+                            Jsontree.display(h.querySelector('.close-icon'),'show');
+                        }
+                    }
+                }
+            }
+
+            Jsontree.display = (el,type) => {
+                el.style.display = (type == 'show') ? 'block' : 'none';
+            }
+
+            Jsontree.hidden = (el) => {
+                var style = window.getComputedStyle(el);
+                return (style.display === 'none');
+            }
+
+            Jsontree.generate = (j,p) => {
+                let html = '';
+
+                for (const [key, value] of Object.entries(j)) {
+                    let k = (p || p===0) ? `${p}.${key}` : key;
+                    if(Array.isArray(value) || typeof value === "object"){
+                        html += `<li class="branch" style="display:none;">
+                                    <div class="treehead">
+                                        ${Jsontree.expander('close')}
+                                        <span class="atrs">${key}</span>
+                                    </div>
+                                    <ul>${Jsontree.generate(value,k)}</ul>
+                                </li>`
+                    }else{
+                        html += `<li style="display:none;">
+                                    <span class="atrs" data-key="${k}">${key}</span>
+                                    <span><i class="treeEmptyCss">${value}</i></span>
+                                </li>`;
+                    }
+                }
+
+                // console.log(html);
+                return html;
+            }
+
+            Jsontree.expander = (t='open') => {
+                return `
+                    <svg class="close-icon" style="${(t=='open') ? '' : 'display:none;'}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M256 512c141.4 0 256-114.6 256-256S397.4 0 256 0S0 114.6 0 256S114.6 512 256 512zM184 232H328c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"/></svg>
+                    <svg class="open-icon" style="${(t=='close') ? '' : 'display:none;'}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M256 512c141.4 0 256-114.6 256-256S397.4 0 256 0S0 114.6 0 256S114.6 512 256 512zM232 344V280H168c-13.3 0-24-10.7-24-24s10.7-24 24-24h64V168c0-13.3 10.7-24 24-24s24 10.7 24 24v64h64c13.3 0 24 10.7 24 24s-10.7 24-24 24H280v64c0 13.3-10.7 24-24 24s-24-10.7-24-24z"/></svg>`;
+            }
+
+            Jsontree.create(container,json,'Connector','connector.860');
+        </script>
+    </body>
+</html>
